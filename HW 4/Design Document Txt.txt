@@ -1,0 +1,174 @@
+Brian Newsom
+CSCI 2270 - Gabe Johnson
+Shang Ma
+email to Shang with [btree]
+cc to Gabe
+
+DESIGN DOCUMENT
+
+Info
+1.	node is a B-tree node that contains information about keys and children.
+2.	keys are values used to keep data in order. For our assignment a key is just an integer, but in practice they could be any number of data types. They are used to divide the tree into subtrees.
+3.	children are references to other nodes. For this assignment they are simply in-memory pointers. In a real situation they might be disk addresses.
+4.	root: this is the top-most node of a B-Tree. Unlike the binary trees we have seen, this may change due to inserting or removing data. We make exceptions for the root node.
+5.	index nodes: these are nodes that are not leaves and not root. It is called an index because its purpose is to guide us to the next layer down.
+6.	leaves: these are the nodes at the bottom of the tree. They do not have children.
+7.	order: the order of a B-Tree is the maximum number of children a non-leaf may have. This is commonly denoted as m for some reason.
+For this assignment we will adhere to the following invariants:
+1.	A node's keys are kept in ascending order, starting at index 0.
+2.	A node may have at most m children.
+3.	Index nodes have at least round_up(m/2) children.
+4.	If the root is not a leaf, it has at least two children.
+5.	All leaves are at the same level.
+6.	The node pointed to by child[i] holds keys that are less than key[i]. The node pointed to by the final child pointer holds keys that are larger than the final key.
+7.	Leaves must have at least round_up(m/2) - 1 keys.
+
+
+
+// -------------------------------------------- I N S E R T --------------------------------------------------------------\\
+void insert(btree* &root, int key);
+// Insert the given key into a b-tree rooted at 'root'.  If the key is
+// already contained in the btree this should do nothing.  
+
+INPUT: address of the root node, the key being inserted
+
+If the root node is NULL
+	init_node(key)
+	return
+If the key is already contained (using function)
+	Return
+If a leaf node
+	If empty slots
+		Add_key(&root, key)
+	Full
+		If parent is full of children
+			Add_height(&root, key)	
+		If previously no parent
+			Point to new root of btree
+			Change is_leaf to true for new leaves	
+	return
+If parent && full of keys
+	If appropriate child node exists
+		Recurse to appropriate child
+	If no appropriate child && not full of children
+		Create child
+	return
+	
+RETURN: Nothing
+On exit: 
+ -- the 'root' pointer should refer to the root of the
+  --tree. (the root may change when we insert or delete)
+ -- the btree pointed to by 'root' is valid.
+
+// -------------------------------------------- R E M O V E -------------------------------------------------------------\\
+//
+// Remove the given key from a b-tree rooted at 'root'. If the key is
+// not in the btree this should do nothing.
+
+If contains is false
+	Return
+If leaf node
+	Search value
+	Delete node, reassign array 
+	Rebalance(node* &root)
+Else if internal node
+	Pick replacement node to from leftmost element of right tree
+	Key = replacement node
+	Remove(replacement node)
+RETURN: NOTHING
+
+// On exit:
+// -- the 'root' pointer should refer to the root of the
+//    tree. (the root may change when we insert or delete)
+// -- the btree pointed to by 'root' is valid.
+void remove(btree* &root, int key);
+
+// ----------------------------------------- C O N T A I N S ----------------------------------------------------------------\\
+//
+// Return true if any node accessed from the given root node contains
+// the provided key value.
+bool contains(btree* &root, int key);
+//Input: root of tree and key searched for
+if root is null
+	return false
+if it has children
+	if key is within grouping 
+		return true
+	Find which child contains key
+	Recurse on this child
+If it has no children
+	if key is in node
+		return true
+	else return false
+RETURN: TRUE OR FALSE
+//On exit:
+//btree should not have changed
+//btree must pass all invariants
+
+//---------------------------------------------------Additional functions-----------------------------------------------------\\
+In sorta pseudocode
+
+void init_node(key)
+//Initializes a node with some default values, takes in first key
+	int num_keys=0;
+	int keys[BTREE_ORDER]=[key];
+	bool is_leaf=true;
+	btree* children[BTREE_ORDER + 1]=0;
+//Return: None
+//On exit: new valid node addressed
+
+Int median(btree* &root)
+//Takes in root of tree (node)
+	Run one iteration of bubble sort
+	Pick ceil(size/2)
+	Return median
+//Return: median value of node
+//On exit: Sorted, median value removed
+
+Void add_key(btree* &root, int key)
+//Adds key to trivial leaf
+//Takes in root of tree and key that needs to be added
+	For(i = 0 ; i < size-1 ; i)
+		If key > key[i] && key < key[i+1]
+			For size
+				Swap elements into order
+		If key < key[i]
+			Swap all elements back 1 position
+		If key > key[i]
+			i++	
+//Return: None
+//On exit: Tree must meet all invariants
+//New key must be added in proper location
+
+Void add_height(node* &root, key)
+//Allows a new level of nodes to be added to tree
+//Takes in root and key added
+
+	Keys.push_back(key)
+	Keys[0] = median(&root)
+	Initialize node, add < keys to left 
+	Initialize node, add > keys to right
+	Set up links to children
+//Return: None
+//On exit: Tree meets all invariants, depth is one greater
+
+
+Void rebalance(node* &root)
+//Repairs node when it is starved by merging
+//Takes in root
+	If right has  > ceil(m/2)-1
+		Add key to end of starved node
+		Replace the key with the replacement node
+		Fix children by adding first child of right to last child of left
+	If left has > ceil(m/2)-1
+		Add key to starved node
+		Replace key with replacement node
+		Fix children by adding last child of left to first child of right
+	Else
+		Initialize new node, add all elements of starved node and its sibling
+		Remove replacement node, replace children with combined node
+		If parent is starved
+			Rebalance(parent)
+Return: Nothing
+On exit: New tree meets all invariants, adds or subtracts depth if necessary
+
