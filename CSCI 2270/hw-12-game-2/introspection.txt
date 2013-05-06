@@ -1,0 +1,29 @@
+You'll turn this in via email to me. Please send it to my gmail account: gabe.johnson@gmail.com and use the subject line CS 2270 Project.
+See GitHub for exact file structure to submit.
+
+
+Initial ideas: enumerate the list of crazy and not-so-crazy ideas that you initially had for your game.
+
+-Hangman
+-Text based adventure
+-Tic Tac Toe
+-Graphics based game
+-Full scale MMORPG (not really)
+
+
+Pivots: list the spots where you changed your mind because you wanted to make something easier (or harder) on your team. Explain why.
+
+Initially, our group talked about trying to add graphics into our project. We steered away from it, though, because it would force a couple of our group members to learn java and add a lot of work for the group. Another pivot was when we lost a team member. We decided to do the same project because it didn't add too much more work.
+
+
+Data structures: What data structures did you use? Why did you choose them? What alternate structures would be appropriate? Why didn’t you choose those?
+
+We considered using a string versus a vector of chars to store the initial input word. Some felt a vector would be better since there are more member functions with a vector but when we realized we would have to convert a string to individual chars then store them in said vector that using string functions would be simpler and more efficient. Also it is very simple to get individual characters from a string using strings member functions then compare that to an input char. We also decided implement this in an object oriented manner because it would make it simpler to store all the necessary game variables in a single instance of the game. 
+
+
+Describe the hardest aspect of this assignment:
+Overall, we were lucky and did not come across too many problems. This is partly because the game was not too complicated. There were some issues in combining the work we had done separately. We used Dropbox to share the work, but when we were simultaneously working on parts that modified the same functions, we then had to go through each of our modifications line-by-line and create a master file with all the changes. We also had small issues in finding common times to meet, but we figured it out and in the end it did not cause any trouble.
+
+
+Artificial Intelligence:
+We started thinking about a Hangman AI by first brainstorming different apporaches of varying complexity. The most difficult idea we had was to import a dictionary. We would then elimante words by length and cross-referencing each letter correctly guessed with every word left in the dictionary. That would have been much too difficult though. So in the end we decided to first start by just going down a priority queue of a predefined list of the most frequently used letters in the English language. But by itself, that would not be very effective. So we added another list of commonly used pairing of letters. Each time a correct letter was guessed, we iterate through the pairings and guess the letter that was coupled to that letter. This proved to be a fairly efficient method of guessing the intial letters. However, the AI rarely could guess the final 1 or 2 letters, unless they happened to be high in the probability priority queue. This is because the computer lacks the ability to holostically look at a word and "just know" what is left.
